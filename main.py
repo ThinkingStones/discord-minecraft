@@ -6,7 +6,10 @@ import asyncio
 import re
 import watchdog
 
-client = discord.Client()
+intents = discord.Intents.default()
+intents.message_content = True  # メッセージコンテンツを受け取るためのintent
+
+client = discord.Client(intents=intents)
 
 # ログファイル監視用のハンドラ
 class LogFileHandler(watchdog.events.FileSystemEventHandler):
@@ -21,7 +24,7 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
     async def process_log(self):
         with open(config.LOG_FILE_PATH, 'r', encoding='utf-8') as log_file:
             lines = log_file.readlines()
-            for line in lines[-10:]:  # 最後の10行をチェック
+            for line in lines[-1:]:  # 最後の10行をチェック
                 await self.check_log_line(line)
 
     async def check_log_line(self, line):
