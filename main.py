@@ -16,6 +16,7 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
     def __init__(self, bot, channel_id):
         self.bot = bot
         self.channel_id = channel_id
+        self.file_position = 0  # ファイルの位置を追跡
 
     def on_modified(self, event):
         if event.src_path == config.LOG_FILE_PATH:
@@ -23,8 +24,10 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
 
     async def process_log(self):
         with open(config.LOG_FILE_PATH, 'r', encoding='utf-8') as log_file:
+            log_file.seek(self.file_position)  # 前回の読み取り位置にシーク
             lines = log_file.readlines()
-            for line in lines[-1:]:  # 最後の10行をチェック
+            self.file_position = log_file.tell()  # 新しい読み取り位置を保存
+            for line in lines[-1:]:  # 前回からの差分をチェック
                 await self.check_log_line(line)
 
     async def check_log_line(self, line):
