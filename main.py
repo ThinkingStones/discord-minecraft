@@ -25,10 +25,12 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
 
     def on_moved(self, event):
         if isinstance(event, watchdog.events.FileMovedEvent) and event.src_path == config.LOG_FILE_PATH:
+            print("[INFO]logfile moved")
             self.file_position = 0
 
     def on_created(self, event):
         if isinstance(event, watchdog.events.FileCreatedEvent) and event.src_path == config.LOG_FILE_PATH:
+            print("[INFO]logfile created")
             self.file_position = 0
 
     async def process_log(self):
@@ -37,6 +39,7 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
             lines = log_file.readlines()
             self.file_position = log_file.tell()  # 新しい読み取り位置を保存
             for line in lines[-1:]:  # 前回からの差分をチェック
+                print("[INFO]read line: ", line)
                 await self.check_log_line(line)
 
     async def check_log_line(self, line):
@@ -63,6 +66,7 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
         for channel in self.channel_id:
             channel = client.get_channel(channel)
             if channel:
+                print("[INFO]sended to ", channel, message)
                 await channel.send(message)
 
 # ログを監視して、入退室を通知
