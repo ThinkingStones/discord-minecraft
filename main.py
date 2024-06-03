@@ -1,4 +1,5 @@
 import os
+import watchdog.events
 import watchdog.observers
 import config
 import discord
@@ -21,6 +22,14 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
     def on_modified(self, event):
         if event.src_path == config.LOG_FILE_PATH:
             asyncio.run_coroutine_threadsafe(self.process_log(), client.loop)
+
+    def on_moved(self, event):
+        if isinstance(event, watchdog.events.FileMovedEvent) and event.src_path == config.LOG_FILE_PATH:
+            self.file_position = 0
+
+    def on_created(self, event):
+        if isinstance(event, watchdog.events.FileCreatedEvent) and event.src_path == config.LOG_FILE_PATH:
+            self.file_position = 0
 
     async def process_log(self):
         with open(config.LOG_FILE_PATH, 'r', encoding='utf-8') as log_file:
