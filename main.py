@@ -39,7 +39,6 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
             lines = log_file.readlines()
             self.file_position = log_file.tell()  # 新しい読み取り位置を保存
             for line in lines[-1:]:  # 前回からの差分をチェック
-                print("[INFO]read line: ", line)
                 await self.check_log_line(line)
 
     async def check_log_line(self, line):
