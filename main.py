@@ -36,6 +36,7 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
     async def process_log(self):
         with open(config.LOG_FILE_PATH, 'r', encoding='utf-8') as log_file:
             log_file.seek(self.file_position)  # 前回の読み取り位置にシーク
+            print("[INFO]file_position", self.file_position)
             lines = log_file.readlines()
             self.file_position = log_file.tell()  # 新しい読み取り位置を保存
             for line in lines[-1:]:  # 前回からの差分をチェック
@@ -65,7 +66,7 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
         for channel in self.channel_id:
             channel = client.get_channel(channel)
             if channel:
-                print("[INFO]sended to ", channel, message)
+                print("[INFO]sended to", channel, message)
                 await channel.send(message)
 
 # ログを監視して、入退室を通知
