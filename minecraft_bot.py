@@ -5,11 +5,6 @@ import watchdog
 import models
 
 def minecraft_bot(client):
-    # ログを監視して、入退室を通知
-    # async def enter_exit_log():
-    #     channel = client.get_channel(config.ENTER_EXIT_LOG_CHANNEL_ID)
-    #     await channel.send()
-
     @client.event
     async def on_ready():
         print("start stone's discord bot")

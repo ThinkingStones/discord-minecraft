@@ -2,6 +2,7 @@ import re
 import asyncio
 import watchdog.events
 import config
+import datetime
 
 # ログファイル監視用のハンドラ
 class LogFileHandler(watchdog.events.FileSystemEventHandler):
@@ -10,8 +11,6 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
         self.channel_id = channel_id
         self.file_position = 0  # ファイルの位置を追跡
         self.log_num = log_num
-        # debug
-        print()
 
     def on_modified(self, event):
         if event.src_path == config.LOG_FILE_PATH[self.log_num]:
@@ -19,18 +18,18 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
 
     def on_moved(self, event):
         if isinstance(event, watchdog.events.FileMovedEvent) and event.src_path == config.LOG_FILE_PATH[self.log_num]:
-            print("[INFO]logfile moved")
+            print(datetime.datetime.now(), "[INFO] logfile moved")
             self.file_position = 0
 
     def on_created(self, event):
         if isinstance(event, watchdog.events.FileCreatedEvent) and event.src_path == config.LOG_FILE_PATH[self.log_num]:
-            print("[INFO]logfile created")
+            print(datetime.datetime.now(), "[INFO] logfile created")
             self.file_position = 0
 
     async def process_log(self):
         with open(config.LOG_FILE_PATH[self.log_num], 'r', encoding='utf-8') as log_file:
             log_file.seek(self.file_position)  # 前回の読み取り位置にシーク
-            print("[INFO]file_position", self.file_position)
+            print(datetime.datetime.now(), "[INFO] file_position", self.file_position)
             lines = log_file.readlines()
             self.file_position = log_file.tell()  # 新しい読み取り位置を保存
             for line in lines[-1:]:  # 前回からの差分をチェック
@@ -60,5 +59,5 @@ class LogFileHandler(watchdog.events.FileSystemEventHandler):
         for channel in self.channel_id:
             channel = self.bot.get_channel(channel)
             if channel:
-                print("[INFO]sended to", channel, message)
+                print(datetime.datetime.now(), "[INFO] sended to", channel, message)
                 await channel.send(message)
