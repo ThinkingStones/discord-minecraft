@@ -5,27 +5,30 @@ import config
 
 # ログファイル監視用のハンドラ
 class LogFileHandler(watchdog.events.FileSystemEventHandler):
-    def __init__(self, bot, channel_id):
+    def __init__(self, bot, channel_id, log_num):
         self.bot = bot
         self.channel_id = channel_id
         self.file_position = 0  # ファイルの位置を追跡
+        self.log_num = log_num
+        # debug
+        print()
 
     def on_modified(self, event):
-        if event.src_path == config.LOG_FILE_PATH:
+        if event.src_path == config.LOG_FILE_PATH[self.log_num]:
             asyncio.run_coroutine_threadsafe(self.process_log(), self.bot.loop)
 
     def on_moved(self, event):
-        if isinstance(event, watchdog.events.FileMovedEvent) and event.src_path == config.LOG_FILE_PATH:
+        if isinstance(event, watchdog.events.FileMovedEvent) and event.src_path == config.LOG_FILE_PATH[self.log_num]:
             print("[INFO]logfile moved")
             self.file_position = 0
 
     def on_created(self, event):
-        if isinstance(event, watchdog.events.FileCreatedEvent) and event.src_path == config.LOG_FILE_PATH:
+        if isinstance(event, watchdog.events.FileCreatedEvent) and event.src_path == config.LOG_FILE_PATH[self.log_num]:
             print("[INFO]logfile created")
             self.file_position = 0
 
     async def process_log(self):
-        with open(config.LOG_FILE_PATH, 'r', encoding='utf-8') as log_file:
+        with open(config.LOG_FILE_PATH[self.log_num], 'r', encoding='utf-8') as log_file:
             log_file.seek(self.file_position)  # 前回の読み取り位置にシーク
             print("[INFO]file_position", self.file_position)
             lines = log_file.readlines()

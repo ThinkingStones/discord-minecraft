@@ -16,7 +16,10 @@ def minecraft_bot(client):
         print(f'Logged in as {client.user.name}')
 
         # ログ監視
-        watcher = models.LogFileHandler(client, config.ENTER_EXIT_LOG_CHANNEL_ID)
+        watcher = [None] * len(config.LOG_FILE_PATH)
         observer = watchdog.observers.Observer()
-        observer.schedule(watcher, path=os.path.dirname(config.LOG_FILE_PATH), recursive=False)
+
+        for log_num in range(len(config.LOG_FILE_PATH)):
+            watcher[log_num] = models.LogFileHandler(client, config.ENTER_EXIT_LOG_CHANNEL_ID, log_num)
+            observer.schedule(watcher[log_num], path=os.path.dirname(config.LOG_FILE_PATH[log_num]), recursive=False)
         observer.start()

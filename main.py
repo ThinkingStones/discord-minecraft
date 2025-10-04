@@ -10,11 +10,12 @@ def main():
 
     client = discord.Client(intents=intents)
 
-    # minecraft
+    # add below
+    ## minecraft
     minecraft_bot.minecraft_bot(client)
+    ## Twitter(old name: X)
 
     client.run(config.TOKEN)
-
 
 if __name__ == "__main__":
     main()
