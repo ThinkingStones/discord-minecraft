@@ -1,6 +1,7 @@
 
 import config
 import discord
+import fxtwitter
 import minecraft_bot
 
 def main():
@@ -14,6 +15,7 @@ def main():
     ## minecraft
     minecraft_bot.minecraft_bot(client)
     ## Twitter(old name: X)
+    fxtwitter.auto_fxtwitter(client)
 
     client.run(config.TOKEN)
 
