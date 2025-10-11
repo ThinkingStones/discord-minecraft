@@ -23,7 +23,7 @@ def auto_fxtwitter(client):
         if len(content_urls) == 0:
             return
         # 埋め込みがある場合return
-        await asyncio.sleep(1)  # 1秒待機
+        await asyncio.sleep(2)  # 1秒待機
         if message.embeds:
             return
 
