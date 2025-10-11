@@ -1,6 +1,7 @@
 import datetime
 import re
 import config
+import asyncio
 
 TWITTER_URL = re.compile(r"https://(?:x|twitter)\.com/[^/\s]+/status/\d+", flags=re.IGNORECASE)
 
@@ -22,6 +23,7 @@ def auto_fxtwitter(client):
         if len(content_urls) == 0:
             return
         # 埋め込みがある場合return
+        await asyncio.sleep(1)  # 1秒待機
         if message.embeds:
             return
 
