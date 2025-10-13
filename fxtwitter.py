@@ -6,12 +6,11 @@ import asyncio
 TWITTER_URL = re.compile(r"https://(?:x|twitter)\.com/[^/\s]+/status/\d+", flags=re.IGNORECASE)
 
 def auto_fxtwitter(client):
-    @client.event
-    async def on_ready():
+    async def on_ready_fxtwitter():
         print(datetime.datetime.now(), "[INFO] start auto fxtwitter")
+    client.add_listener(on_ready_fxtwitter, "on_ready")
 
-    @client.event
-    async def on_message(message):
+    async def on_message_fxtwiter(message):
         # 対象チャネルじゃない場合return
         if not message.channel.id in config.CONV_FXTWITTER_TARGET_CHANNEL:
             return
@@ -41,3 +40,4 @@ def auto_fxtwitter(client):
         except Exception as e:
             print(e)
             print(datetime.datetime.now(), "[INFO] failed to reply fxtwitter")
+    client.add_listener(on_message_fxtwiter, "on_message")
